@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<typeInfoHistroy>
+    <typeInfo handle="=02-UserManagement/C:\/Users\/Prathamesh\/.m2\/repository\/org\/springframework\/data\/spring-data-jpa\/3.2.4\/spring-data-jpa-3.2.4.jar=/maven.pomderived=/true=/=/maven.pomderived=/true=/=/maven.groupId=/org.springframework.data=/=/maven.artifactId=/spring-data-jpa=/=/maven.version=/3.2.4=/=/maven.scope=/compile=/&lt;org.springframework.data.jpa.repository(JpaRepository.class[JpaRepository" modifiers="1537" timestamp="1711896832934"/>
+    <typeInfo handle="=02-UserManagement/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.ashokit.services{UserService.java[UserService" modifiers="513" timestamp="1713199492459"/>
+    <typeInfo handle="=02-UserManagement/C:\/Users\/Prathamesh\/.m2\/repository\/org\/springframework\/boot\/spring-boot\/3.2.4\/spring-boot-3.2.4.jar=/maven.pomderived=/true=/=/maven.pomderived=/true=/=/maven.groupId=/org.springframework.boot=/=/maven.artifactId=/spring-boot=/=/maven.version=/3.2.4=/=/maven.scope=/compile=/&lt;org.springframework.boot(ApplicationRunner.class[ApplicationRunner" modifiers="1537" timestamp="1711896835501"/>
+</typeInfoHistroy>
