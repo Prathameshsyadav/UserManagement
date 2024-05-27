@@ -73,7 +73,7 @@ public class UserController {
 
 	@GetMapping("/")
 	public String loginPage(Model model) {
-		
+		int i = 10/0;
 		model.addAttribute("loginDTO", new LoginDTO());
 		return AppConstants.INDEX;
 	}

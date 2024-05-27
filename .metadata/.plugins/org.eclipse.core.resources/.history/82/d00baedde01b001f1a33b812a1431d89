@@ -73,16 +73,12 @@ public class UserController {
 
 	@GetMapping("/")
 	public String loginPage(Model model) {
-		
 		model.addAttribute("loginDTO", new LoginDTO());
 		return AppConstants.INDEX;
 	}
 
 	@PostMapping("/login")
 	public String login(LoginDTO loginDTO, Model model) {
-		
-		
-		
 		Map<String, String> messages = props.getMessages();
 		
 		UserDTO user = userService.getUser(loginDTO);
@@ -108,7 +104,7 @@ public class UserController {
 		Map<String, String> messages = props.getMessages();
 		
 		if(!(pwdDTO.getNewPwd().equals(pwdDTO.getConfirmPwd()))) {
-			model.addAttribute(AppConstants.ERROR_MSG, messages.get(AppConstants.PWDMATCHERROR));
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdMatchError"));
 			return AppConstants.RESET_PASS_VIEW;
 		}
 		
@@ -120,12 +116,12 @@ public class UserController {
 			if(resetPwd) {
 				return AppConstants.REDIRECTDASH;
 			} else {
-				model.addAttribute(AppConstants.ERROR_MSG, messages.get(AppConstants.PWDUPDATEERROR));
+				model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdUpdateError"));
 				return AppConstants.RESET_PASS_VIEW;
 			}
 			
 		}else {
-			model.addAttribute(AppConstants.ERROR_MSG, messages.get(AppConstants.PWDUPDATEERROR));
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("oldPassError"));
 		}
 		return AppConstants.RESET_PASS_VIEW;
 	}

@@ -29,10 +29,10 @@ public class AppConstants {
 	
 	public static final String REDIRECTDASH = "redirect:dashboard";
 	
-	public static final String PWDMATCHERROR = "pwdMatchError";
+	public static final String  = "redirect:dashboard";
 	
-	public static final String PWDUPDATEERROR = "pwdUpdateError";
+	public static final String  = "redirect:dashboard";
 	
-	public static final String OLDPASSERROR = "oldPassError";
+	public static final String  = "redirect:dashboard";
 
 }

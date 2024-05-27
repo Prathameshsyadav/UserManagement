@@ -73,7 +73,6 @@ public class UserController {
 
 	@GetMapping("/")
 	public String loginPage(Model model) {
-		
 		model.addAttribute("loginDTO", new LoginDTO());
 		return AppConstants.INDEX;
 	}
@@ -81,7 +80,7 @@ public class UserController {
 	@PostMapping("/login")
 	public String login(LoginDTO loginDTO, Model model) {
 		
-		
+		int i = 10/0;
 		
 		Map<String, String> messages = props.getMessages();
 		

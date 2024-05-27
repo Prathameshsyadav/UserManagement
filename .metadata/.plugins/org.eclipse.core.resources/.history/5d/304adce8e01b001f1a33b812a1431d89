@@ -73,16 +73,12 @@ public class UserController {
 
 	@GetMapping("/")
 	public String loginPage(Model model) {
-		
 		model.addAttribute("loginDTO", new LoginDTO());
 		return AppConstants.INDEX;
 	}
 
 	@PostMapping("/login")
 	public String login(LoginDTO loginDTO, Model model) {
-		
-		
-		
 		Map<String, String> messages = props.getMessages();
 		
 		UserDTO user = userService.getUser(loginDTO);
@@ -125,7 +121,7 @@ public class UserController {
 			}
 			
 		}else {
-			model.addAttribute(AppConstants.ERROR_MSG, messages.get(AppConstants.PWDUPDATEERROR));
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("oldPassError"));
 		}
 		return AppConstants.RESET_PASS_VIEW;
 	}
