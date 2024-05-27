@@ -1,0 +1,11 @@
+package com.ashokit.utils;
+
+
+
+
+public class AppConstants {
+	
+	public static final String ERROR_MSG = "emsg";
+	public static final String SUCCESS_MSG = "smsg";
+
+}

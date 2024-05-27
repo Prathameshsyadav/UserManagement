@@ -1,0 +1,136 @@
+package com.ashokit.controller;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ashokit.dto.LoginDTO;
+import com.ashokit.dto.RegisterDTO;
+import com.ashokit.dto.ResetPwdDTO;
+import com.ashokit.dto.UserDTO;
+import com.ashokit.services.UserService;
+import com.ashokit.utils.AppConstants;
+import com.ashokit.utils.AppProperties;
+
+@Controller
+public class UserController {
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	AppProperties props;
+
+	@GetMapping("/register")
+	public String registerPage(Model model) {
+		model.addAttribute("registerDTO", new RegisterDTO());
+		Map<Integer, String> countriesMap = userService.getCountries();
+		model.addAttribute("countriesMap", countriesMap);
+		return AppConstants.REGISTER_VIEW;
+	}
+
+	@GetMapping("/states/{cid}")
+	@ResponseBody
+	public Map<Integer, String> getStates(@PathVariable("cid") Integer cid) {
+		return userService.getStates(cid);
+	}
+
+	@GetMapping("/cities/{sid}")
+	@ResponseBody
+	public Map<Integer, String> getCities(@PathVariable("sid") Integer sid) {
+		return userService.getCities(sid);
+	}
+
+	@PostMapping("/register")
+	public String register(RegisterDTO regDTO, Model model) {
+		
+		Map<String, String> messages = props.getMessages();
+		
+		UserDTO user = userService.getUser(regDTO.getEmail());
+		if (user != null) {
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("dupEmail"));
+			return AppConstants.REGISTER_VIEW;
+		}
+		boolean registerUser = userService.registerUser(regDTO);
+		if (registerUser) {
+			model.addAttribute(AppConstants.SUCCESS_MSG, messages.get("regSucc"));
+		} else {
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("regFailed"));
+		}
+			model.addAttribute("countriesMap", userService.getCountries());
+		return AppConstants.REGISTER_VIEW;
+	}
+
+	@GetMapping("/")
+	public String loginPage(Model model) {
+		model.addAttribute("loginDTO", new LoginDTO());
+		return AppConstants.INDEX;
+	}
+
+	@PostMapping("/login")
+	public String login(LoginDTO loginDTO, Model model) {
+		Map<String, String> messages = props.getMessages();
+		
+		UserDTO user = userService.getUser(loginDTO);
+		if (user == null) {
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("invalidCredentials"));
+			return AppConstants.INDEX;
+		}
+
+		if ("YES".equals(user.getPwdUpdate())) {
+			// go to dashboard
+			return "redirect:dashboard";
+		} else {
+			// go to reset pwd paage
+			ResetPwdDTO res = new ResetPwdDTO();
+			res.setEmail(user.getEmail());
+			model.addAttribute("resetPwdDTO", res);
+			return AppConstants.RESET_PASS_VIEW;
+		}
+	}
+
+	@PostMapping("/resetPwd")
+	public String resetPwd(ResetPwdDTO pwdDTO, Model model) {
+		Map<String, String> messages = props.getMessages();
+		System.out.println("/reset pwd");
+		if(!(pwdDTO.getNewPwd().equals(pwdDTO.getConfirmPwd()))) {
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdMatchError"));
+			return AppConstants.RESET_PASS_VIEW;
+		}
+		
+		UserDTO user = userService.getUser(pwdDTO.getEmail());
+		
+		
+		if(user.getPwd().equals(pwdDTO.getOldPwd())) {
+			boolean resetPwd = userService.resetPwd(pwdDTO);
+			if(resetPwd) {
+				return "redirect:dashboard";
+			} else {
+				model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdUpdateError"));
+				return AppConstants.RESET_PASS_VIEW;
+			}
+			
+		}else {
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("oldPassError"));
+		}
+		return AppConstants.RESET_PASS_VIEW;
+	}
+
+	@GetMapping("/dashboard")
+	public String dashboard(Model model) {
+
+		String quote = userService.getQuote();
+		model.addAttribute("quote", quote);
+		return "dashboard";
+	}
+
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/";
+	}
+}

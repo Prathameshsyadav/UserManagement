@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 	public Map<Integer, String> getCountries() {
 		// TODO Auto-generated method stub
 		Map<Integer, String> map = new HashMap<>();
-		
+		System.out.println("Find all countries");
 		List<CountryEntity> listCountries = countryRepo.findAll();
 		
 		listCountries.forEach(c -> {

@@ -15,18 +15,23 @@ import com.ashokit.dto.RegisterDTO;
 import com.ashokit.dto.ResetPwdDTO;
 import com.ashokit.dto.UserDTO;
 import com.ashokit.services.UserService;
+import com.ashokit.utils.AppConstants;
+import com.ashokit.utils.AppProperties;
 
 @Controller
 public class UserController {
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	AppProperties props;
 
 	@GetMapping("/register")
 	public String registerPage(Model model) {
 		model.addAttribute("registerDTO", new RegisterDTO());
 		Map<Integer, String> countriesMap = userService.getCountries();
 		model.addAttribute("countriesMap", countriesMap);
-		return "registerView";
+		return AppConstants.REGISTER_VIEW;
 	}
 
 	@GetMapping("/states/{cid}")
@@ -43,34 +48,43 @@ public class UserController {
 
 	@PostMapping("/register")
 	public String register(RegisterDTO regDTO, Model model) {
+		
+		
+		
+		Map<String, String> messages = props.getMessages();
+		
 		UserDTO user = userService.getUser(regDTO.getEmail());
+		
 		if (user != null) {
-			model.addAttribute("emsg", "Duplicate Email");
-			return "registerView";
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("dupEmail"));
+			model.addAttribute("countriesMap", userService.getCountries());
+			return AppConstants.REGISTER_VIEW;
 		}
 		boolean registerUser = userService.registerUser(regDTO);
 		if (registerUser) {
-			model.addAttribute("smsg", "User registered Successfully");
+			model.addAttribute(AppConstants.SUCCESS_MSG, messages.get("regSucc"));
 		} else {
-			model.addAttribute("emsg", "User Registration failed");
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("regFailed"));
 		}
+			
 			model.addAttribute("countriesMap", userService.getCountries());
-		return "registerView";
+		return AppConstants.REGISTER_VIEW;
 	}
 
 	@GetMapping("/")
 	public String loginPage(Model model) {
 		model.addAttribute("loginDTO", new LoginDTO());
-		return "index";
+		return AppConstants.INDEX;
 	}
 
 	@PostMapping("/login")
 	public String login(LoginDTO loginDTO, Model model) {
-		System.out.println("/login called");
+		Map<String, String> messages = props.getMessages();
+		
 		UserDTO user = userService.getUser(loginDTO);
 		if (user == null) {
-			model.addAttribute("emsg", "Invalid Credentials");
-			return "index";
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("invalidCredentials"));
+			return AppConstants.INDEX;
 		}
 
 		if ("YES".equals(user.getPwdUpdate())) {
@@ -81,32 +95,35 @@ public class UserController {
 			ResetPwdDTO res = new ResetPwdDTO();
 			res.setEmail(user.getEmail());
 			model.addAttribute("resetPwdDTO", res);
-			return "resetPwdView";
+			return AppConstants.RESET_PASS_VIEW;
 		}
 	}
 
 	@PostMapping("/resetPwd")
 	public String resetPwd(ResetPwdDTO pwdDTO, Model model) {
+		Map<String, String> messages = props.getMessages();
 		System.out.println("/reset pwd");
 		if(!(pwdDTO.getNewPwd().equals(pwdDTO.getConfirmPwd()))) {
-			model.addAttribute("emsg", "new pwd and confirm pwd is not same");
-			return "resetPwdView";
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdMatchError"));
+			return AppConstants.RESET_PASS_VIEW;
 		}
 		
 		UserDTO user = userService.getUser(pwdDTO.getEmail());
+		
+		
 		if(user.getPwd().equals(pwdDTO.getOldPwd())) {
 			boolean resetPwd = userService.resetPwd(pwdDTO);
 			if(resetPwd) {
 				return "redirect:dashboard";
 			} else {
-				model.addAttribute("emsg", "password reset failed");
-				return "resetPwdView";
+				model.addAttribute(AppConstants.ERROR_MSG, messages.get("pwdUpdateError"));
+				return AppConstants.RESET_PASS_VIEW;
 			}
 			
 		}else {
-			model.addAttribute("emsg", "Given old pwd is wrong");
+			model.addAttribute(AppConstants.ERROR_MSG, messages.get("oldPassError"));
 		}
-		return "resetPwdView";
+		return AppConstants.RESET_PASS_VIEW;
 	}
 
 	@GetMapping("/dashboard")
